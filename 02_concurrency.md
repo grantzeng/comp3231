@@ -6,6 +6,8 @@ A **critical region** is a region of code where shared resources are accessed.
 
 The _issue_ with uncoordinated access is that you get **race conditions**, that is that outcome of the code is now non-deterministic/depends on what order the different threads interleave in execution. 
 
+> _Classic example_ is a data race between two threads one trying to increment a global variable and one trying to decrement a global variable. It's not even the _interleaving_ of the lines of code, it's also of the assembly because the reading/writing is non-atomic!
+
 # Synchronisation 
 
 Design criteria for synchronising processes/threads
@@ -26,13 +28,19 @@ _Strict alternation_: The idea is processes busy wait/spinlock until their turn 
 
 _Petersen's solution_: `(Omitted)`
 
+> But as far as I can tell the issue is that it involves a busy wait = generating heat 
+
 _Test-and-set lock_: Basically a lock variable, but use hardware instructions to lock the memory bus atomically. Fails (5) at user level, but useful in kernel. 
 - The problem with this solution is basically it involves busy-waiting/constantly polling the lock variable until you see it's your turn. 
 - Starvation is also possible if more than one process is waiting for the resource (it's whoever gets there first that wins)
 
 
+
+## Locks 
+??? 
+
 ## Semaphores 
-> Really what we want to introduce is the semantics of putting a thread to *sleep* if a resource is not available and *waking* it when it is. 
+Really what we want to introduce is the semantics of putting a thread to *sleep* if a resource is not available and *waking* it when it is (to avoid the spinning/busy wait)
 
 ```C
 struct semaphore {
@@ -61,27 +69,50 @@ void P(struct semaphore *);
 void V(struct semaphore *); 
 ```
 
-_However_, programming with them is difficult because every signal has to matched to some wait (what if you have too many or miss some?), ordering of signals/waits can cause issues
+_However_, programming with them is difficult because every signal has to matched to some wait (what if you have too many or miss some?), ordering of signals/waits can cause issues 
 
-
-## Locks 
-??? 
+> Analogous to matching `malloc` with `free`
 
 ## Condition variables 
-??
+Ideally we may want to wait until some predicate is true. 
+
+> ? Solves issue of lost wakeup? 
+> I never used condition variables, so we need to do a little practice with this
+
+```c
+struct cv {
+    char *cv_name;
+    struct wchan *cv_wchan;
+};
+
+struct cv *cv_create(const char *name);
+
+void cv_destroy(struct cv *);
+
+/*
+    Condition variable operations (must be atomic) 
+
+    - cv_wait - release supplied lock, sleep; and if woken, reacquire lock
+    
+    - cv_signal - wake up one thread that's sleeping 
+    
+    - cv_broadcast - wake up ALL threads that're sleeping 
+*/
+void cv_wait(struct cv *cv, struct lock *lock);
+
+void cv_signal(struct cv *cv, struct lock *lock);
+
+void cv_broadcast(struct cv *cv, struct lock *lock);
+```
 
 ## Monitors
 
-# Problems
+# Classic problems
 
 ## Producer-consumer bounded buffer problem
 
 
 ## Dining philosopher's problem 
-
-
-# Deadlock 
-# Livelock 
 
 
 
