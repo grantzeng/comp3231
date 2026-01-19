@@ -1,4 +1,13 @@
-# Processes
+# (Questions)
+```
+1. Invariants about processes/threads true about all kernels
+
+2. Different ways different OSes implement these abstractions
+
+    - focus on OS161 (since I need this to implement fork/exec for redoing the first assignment)
+```
+
+# Processes/threads
 A _process_ is the abstraction that provides the illusion to executing code of having its own private machine. This means: 
 1. Providing it with a (private) address space (resource context + memory isolation) 
 2. Providing what appears to be a CPU that it can run on. (execution context)
@@ -36,13 +45,13 @@ The canonical transitions are:
 > TODO: what causes proceses to be created/destroyed
 
 
-# Threads
+## Context switching
 
 
 
 # Implementing processes/threads
 
-### What should we put into a process control block/PCB? 
+### What should we put into a process control block/PCB? What should we put in the TCB? 
 
 <!-- > NOTE: Depending _on_ how your OS in question implements processes and threads, some of this stuff might be tracked in the thread control block (it's a question of whether you want to encapsulate this info at the process or the thread level)
 

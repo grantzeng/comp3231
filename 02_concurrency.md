@@ -117,3 +117,11 @@ void cv_broadcast(struct cv *cv, struct lock *lock);
 
 
 
+
+
+
+
+# Deadlock 
+# Livelock 
+
+
