@@ -3,7 +3,8 @@ The problem we are trying to deal with is: how do you multiplex the processor? H
 
 All these abstractions need some discussion of
 - Sequential execution/s of a program ("thread of execution")
-- Some kind of resource isolation/context in which the execution happens. ("container) 
+- Some kind of resource isolation/context in which the execution happens. ("container")
+
 with varying degrees of separation between the two concepts
 
 The problem of _who/what_ to run is left to the scheduler. 
@@ -74,71 +75,3 @@ The downside is that the concurrency needs some explicit state manager, rather t
 ### Why? 
 > _Overall design motivation_: the workload involves massive amounts of I/O concurrency
 > - I.e. most of the time you spend waiting for I/O, so there's not really any advantage to having all the additional resources to set up even a thread since it's not mostly about compute. 
-
-
-<!-- # (Questions)
-```
-Scope: 
-- True facts about processes/threads abstraction that are true of all kernels
-
-See processes/threads implementation: this is OS161 specific details
-
-Need to make notes on what is 3231 specific and what is generally true
-```
-
-### (Aside: terminology)
-
-# Process
-
-A _process_ is the abstraction that provides the illusion to executing code of having its own private machine. This means: 
-1. Providing it with a (private) address space (resource context + memory isolation) 
-2. Providing what appears to be a CPU that it can run on. (execution context)
-
-This is because we want to multiplex programs on shared hardware to maximise utilisation, while preventing executing programs from interfering with each other or especially the kernel. 
-
-### (Aside: threads)
-> "A process has one or more threads"
-
-The usual way of speaking about things is the _unit of execution_ is called a thread, and a process is really just the _resource container/execution context_ shared by threads. 
-
-> Historically traditional Unix had singled threaded processes, so the distinction between execution ("thread") and execution/s with environment ("process") is often elided, and people think of a process as being execution as well, not just environment.  
-
-In this terminology of _threads per process_ you can classify operating systems like this: 
-||Single process| Multiple processes|
-|-|-|-|
-|Single thread | MSDOS, simple embeddded|Traditional Unix|
-|Multiple threads|(rare, uncommon)|Modern Unix (Linux), Windows|
-
-but how the process/thread distinction holds depends on the specific OS you're looking at. 
-
-## Lifecycle 
-
-### State machine 
-A live scheduleable entity (thread or process depending on your OS) is either `BLOCKED`, `READY` or `RUNNING`
-
-The canonical transitions are:
-1. `RUNNING` $\rightarrow$ `BLOCKED`: waiting for I/O, a timer, or generally waiting for some resource
-2. `RUNNING` $\rightarrow$ `READY`: voluntary `yield`, time slice finishes and scheduler picks something else to run
-3. `BLOCKED` $\rightarrow$ `READY`: resource or I/O becomes available 
-4. `READY` $\rightarrow$ `RUNNING`: scheduler picks this schedulable entity to run
-
-
-### Creating/terminating
-> TODO: Rewrite some of this is Unix specific
-
-Processes are created during system initialisation (foreground (interactive processes), background (daemons)), when some other process executes a process creation syscall, when a user requests it or when a batch job is initiated
-> In traditional Unix the kernel starts a special PID 0 idle/swapper task, then creates PID 1 (init). From there, almost all user processes are descendants of init (PID 1).
-
-Processes termination is either _voluntary_ (normal exit, error exit) or  _involuntary_ (fatal error, killed by another process). 
-
-
-### "Context switching"
-A context switch happens when either threads are switched between or processes are switched between. 
-
-> In OS161, the scheduler schedules _kernel threads_. This means only _sometimes_ does the container/parent process also need switching, since threads may both belong to one process. 
-
-This happens any time: a system call is invoked, there is some exception, or on an interrupt. 
-
-# Threads
-
- -->
