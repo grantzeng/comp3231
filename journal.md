@@ -21,3 +21,11 @@ Some difficulty of the correspondence between the container/execution mental mod
 
 ### 12:17pm 
 I think take a _short break_. Then come back and jot down a short list of the key concepts I'd want to be able to explain for processes/threads. 
+
+
+# 2026-01-26 
+### 12:31pm 
+Today I will focus on recapping the theory of the hardware that I need to know about to do OS work. 
+
+### 2:19pm 
+Note: separate out the topics to different files, but you should make a catalogue for notes and how they match to each week

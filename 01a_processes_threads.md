@@ -1,13 +1,13 @@
-# (Multiplexing the processor)
-The problem we are trying to deal with is: how do you multiplex the processor? How do you "execute" multiple programs simultaneously. 
-
-All these abstractions need some discussion of
-- Sequential execution/s of a program ("thread of execution")
-- Some kind of resource isolation/context in which the execution happens. ("container")
-
-with varying degrees of separation between the two concepts
-
-The problem of _who/what_ to run is left to the scheduler. 
+# (Overview)
+> The problem we are trying to deal with is: how do you multiplex the processor? How do you "execute" multiple programs simultaneously? What are some reasonable abstractions to do this?
+>
+> All these abstractions need some discussion of
+> - Sequential execution/s of a program ("thread of execution")
+> - Some kind of resource isolation/context in which the execution happens. ("container")
+>
+> with varying degrees of separation between the two concepts
+>
+> The problem of _who/what_ to run is left to the scheduler. 
 
 # Processes
 
@@ -18,7 +18,7 @@ The idea is that the OS should provide an executing program the illusion that th
 > The traditional Unix model: there are multiple processes, with only one thread of execution, so the distinction between a thread (execution) and a process (execution, plus its context/container) elided. 
 
 The model is that while in implementation we have multiprogramming with one program counter, the conceptual model provided is that there are multiple isolated sequential processes each with its own program counter. 
-- And at least on a uniprocessor, only one process is active at any moment. 
+> And at least on a uniprocessor, only one process is active at any moment. 
 
 
 ### Process lifecycle

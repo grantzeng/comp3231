@@ -1,37 +1,27 @@
 # Implementing processes/threads 
 
-The working mental model is this: 
-- A _process_ bundles both execution/s and execution contexts (it is _not_ just a container)
-- A _thread_ always belongs to some process, and refers to a specific path of sequential execution. 
 
-## Hardware
+<!--
 
+Things to read up on : 
+- minimum knowledge needed of hardware to get things working
+- typical implementation strategies
+    - kernel vs. user thread discussion 
+- how context switching is implemented 
+-->
 
+> It's difficult to talk about implementation in general terms so we'll talk about how implementation would happen on MIPS R3000
 
-## How/what to bookkeep?
-> A lot of this comes down to: what do you want to track with the container and what do you want to track for paths of execution? 
+> TODO: Look at how x86 works instead
 
-### Process model
-> Basically, in traditional Unix, there is one thread per process, and things to track about the container and the execution are bundled together. 
+## Hardware 
+> See notes on MIPS R300. The only really important point is that this architecture branch delay slots (this is just a quirk specific to the hardware being emulated, not generally, e.g. x86 doesn't work like this) 
 
-Under this model a _process control block_ will have things like: 
-- _Process management metadata_:  registers, `pc`, `psw`, `sp`, process state, priority, scheduling parameters, `pid`, `ppid`, process group, signals, time start, cpu time used, children's cpu time, time of next alarm
-- _Memory management_: pointers to `.text`, `.data`, `.stack` 
-- _File management_: `root`, `cwd`, `fd`s ("open file table"), `uid`, `gid`
+> I'm not _completely_ sure how this affects implementation, we'll get to that
 
-### Thread model  
-Under the thread model, execution gets separated from the environment, so:  
-- _Per process/"shared between threads"/"global"_: address space, global variables, open files, child processes, alarms, signals, signal handlers, other accounting information 
-- _Per thread_: `pc`, registers, `sp`, thread specific state
-
-> This separates container metadata from execution metadata. Sharing of the globals also now introduces some concurrency problems.
+# Implementing processes
 
 
-## Kernel/user threads
+# Implementing threads
 
-
-
-
-
-## High level implementation of the scheduler 
-> Not discussing scheduling policy here
+# Implementing context switching
