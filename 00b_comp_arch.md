@@ -1,6 +1,11 @@
 # (The absolute minimum background you need to work with OS code)
 
-# MIPS R3000
+> Knowing about the ISA/minimum bits of computer architecture you need to know about to
+
+
+> The point is it's kinda hard to talk generally about implementation without a specific piece of hardware, so we cover MIPS R3000. 
+
+### MIPS R3000
 
 Has a load/store architecture, only load and store instructions will ever operate on memory. 
 
@@ -86,6 +91,8 @@ nop
 - `r28`: `gp` global pointer, `r29`: `sp` stack pointer, `r30`: `fp` frame pointer
 > Last three need ot be restored
 
+
+### Demo: read some assembler
 > TODO: Fix this 
 ```mips
 #  Calculating a factorial in MIPS
@@ -117,3 +124,5 @@ Within a stack frame there is usually some convention as to the structure of the
 - arguments $\rightarrow$ saved registers $\rightarrow$ local variables $\rightarrow$ dynamic area (allocate with `alloca`)
 
 > `alloca` can be used to allocate _more_ memory on the current frame (but the issue here is then, sure it gets cleaned up but what you still have a pointer hanging around to this freed memory?)
+
+> _Also note_: your underlying mental model of the stack growing down and the heap growing doesn't exist in practice, this is also an illusion the virtual memory subsystem provides. 

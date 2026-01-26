@@ -14,7 +14,7 @@ Things to read up on :
 
 > TODO: Look at how x86 works instead
 
-## Hardware 
+## How does hardware affect the implementation? 
 > See notes on MIPS R300. The only really important point is that this architecture branch delay slots (this is just a quirk specific to the hardware being emulated, not generally, e.g. x86 doesn't work like this) 
 
 > I'm not _completely_ sure how this affects implementation, we'll get to that

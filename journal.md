@@ -29,3 +29,17 @@ Today I will focus on recapping the theory of the hardware that I need to know a
 
 ### 2:19pm 
 Note: separate out the topics to different files, but you should make a catalogue for notes and how they match to each week
+
+### 2:25pm
+We're going to stop here and take a break.
+
+```
+Aims for this week 
+[x] minimum amount of computer architecture needed for OS
+[] minimum amount of knowledge of the memory subsystems needed for OS 
+[] basic discussion about how to implement the different abstractions
+[] EOS: more advanced discussion about how to implement the abstractions (scheduler activations etc.)
+
+Last week
+[x] notes discussing the fact we need abstractions for multiplexing a CPU
+```
