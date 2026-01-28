@@ -1,4 +1,6 @@
-# Processes/Models for virtualising the CPU
+# Processes and threads
+> 
+
 > The problem we are trying to deal with is: how do you multiplex the processor? How do you "execute" multiple programs simultaneously? What are some reasonable abstractions to do this?
 >
 > All these abstractions need some discussion of
@@ -11,6 +13,7 @@
 
 # Processes model 
 
+
 The simplest way of doing this is to bundle an executing program with its context as a _process_. 
 
 The idea is that the OS should provide an executing program the illusion that they have a private CPU to themselves. 
@@ -20,6 +23,8 @@ The idea is that the OS should provide an executing program the illusion that th
 The model is that while in implementation we have multiprogramming with one program counter, the conceptual model provided is that there are multiple isolated sequential processes each with its own program counter. 
 > And at least on a uniprocessor, only one process is active at any moment. 
 
+
+> ```Early Unix model: single process + single unit of execution within it (this is the most obvious initial attempt at doing an abstraction for the CPU), I think I need to add notes in. Basically if you look at OSTEP they don't mention threading,  they start with this Unix-y process model first (then threading is a problem for later slash an obvious extension of the model)```
 
 ### Process lifecycle
 
@@ -54,14 +59,14 @@ In the terminology of _processes having threads_ we can classify operating syste
 The reasons for wanting threading are:  
 - _Performance_: Threads waiting for I/O can be overlapped with computing threads, which you can't if you only have one thread. 
 > However there's no advantage if threads are compute bound on a uniprocessor, the point is we reduce idling the processor when waiting for I/O)
-- If we have a multiprocessor, it's easier to take advantage of the parallelism underneath
+- If we have a multiprocessor, it's easier to take advantage of the parallelism underneath because the programming model mimics it (scheduler could just put different kernel threads on different processors)
 - Threads are less resource intensive than whole processes, and can share resources/memory between them 
 > But the trade-off to this is that you need to manage concurrent access to shared resources!
 - (_Versus an event-driven system_) Simpler to program than a state machine. 
 
 
 ### Why? 
-> _Overall design motivation_: want to allow some concurrency and shared memory (but less expensively than IPC). 
+> _Overall design motivation_: what we if want to allow for a bit more concurrency and less isolation? 
 > - This might turn up in say, word processing software, where it makes sense to have conceptually separate threads e.g. one watching the keyboard, one watching the mouse, a daemon that saves the document etc.
 > - Or a webserver, you have one infinite listening loop in a dispatcher thread that spawns worker threads when something needs to be done.  
 

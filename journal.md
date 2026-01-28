@@ -43,3 +43,26 @@ Aims for this week
 Last week
 [x] notes discussing the fact we need abstractions for multiplexing a CPU
 ```
+
+
+# 2026-01-28 
+### 2:17pm 
+I'm going around in circles re: processes and threads implementation. Basically, the issue is this: somehow the CPU has to be multiplexed  - what are some reasonable ways of solving this. 
+
+There are three standard solutions: 
+- processes (isolated container with single thread of execution)
+- kernel threads (we, the OS/kernel has to manage the concurrency within each container)
+- user threasd (let the user deal with managing the concurrency)
+
+
+
+I think just learn this + what are the trade-offs for each design
+> _Why I am doing this_: For AOS, you're building an OS so you will probably need to implement some kind of abstraction of the CPU 
+
+
+### 5:02pm 
+Come back to implementation theory. 
+
+Basically, at high level what interfaces + data structures have to be offered. 
+
+The EOS lecture for processes and threads is just an extension of this. 
