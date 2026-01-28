@@ -1,15 +1,15 @@
-# (Overview)
+# Processes/Models for virtualising the CPU
 > The problem we are trying to deal with is: how do you multiplex the processor? How do you "execute" multiple programs simultaneously? What are some reasonable abstractions to do this?
 >
 > All these abstractions need some discussion of
-> - Sequential execution/s of a program ("thread of execution")
-> - Some kind of resource isolation/context in which the execution happens. ("container")
+> 1.  Sequential execution/s of a program ("thread of execution")
+> 2.  Some kind of resource isolation/context in which the execution happens. ("container")
 >
 > with varying degrees of separation between the two concepts
 >
 > The problem of _who/what_ to run is left to the scheduler. 
 
-# Processes
+# Processes model 
 
 The simplest way of doing this is to bundle an executing program with its context as a _process_. 
 
@@ -40,7 +40,7 @@ Processes termination is either _voluntary_ (normal exit, error exit) or  _invol
 > _Overall design motivation_: This prioritises memory isolation/protection boundaries which 
 multiprogramming in the 1960s did not really have managed automatically. 
 
-# Threads
+# Thread model 
 
 Under the thread model, execution is distinguished from its context; a process becomes a resource container and we allow _some_ concurrency between the exeuction within the container.
 - This includes every thread getting its own private stack (implicitly manage computation state)
@@ -65,7 +65,7 @@ The reasons for wanting threading are:
 > - This might turn up in say, word processing software, where it makes sense to have conceptually separate threads e.g. one watching the keyboard, one watching the mouse, a daemon that saves the document etc.
 > - Or a webserver, you have one infinite listening loop in a dispatcher thread that spawns worker threads when something needs to be done.  
 
-# Event-driven systems 
+# Event-driven systems
 
 The idea with this is that you multiplex the CPU across _many_ waiting computations
 
