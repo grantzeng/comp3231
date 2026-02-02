@@ -66,3 +66,10 @@ Come back to implementation theory.
 Basically, at high level what interfaces + data structures have to be offered. 
 
 The EOS lecture for processes and threads is just an extension of this. 
+
+
+
+# 2026-02-02
+
+### 12:41pm 
+I think it's still too early to implement a safe `fork`, we don't understand enough about concurrency and my picture of the affected kernel data structures is a bit hazy. But we shall get to it. 
