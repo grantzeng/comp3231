@@ -73,3 +73,8 @@ The EOS lecture for processes and threads is just an extension of this.
 
 ### 12:41pm 
 I think it's still too early to implement a safe `fork`, we don't understand enough about concurrency and my picture of the affected kernel data structures is a bit hazy. But we shall get to it. 
+
+## 3:37pm 
+We're stuck on a programming problem that uses semaphores (basically you have to invent `cv_broadcast` somehow, which I don't know how to for now)
+
+> Can you explain why your current solution is wrong

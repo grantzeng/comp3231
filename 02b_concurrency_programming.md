@@ -32,6 +32,8 @@ void V(struct semaphore *);  // V: "verhogen"/increment/signal
 
 > If you set the initial count to 1 ("binary semaphore") then effectively you have a lock/mutex: at most one thread is allowed to access a resource. But the difference is that locks are "owned", whereas a sempahore is not. 
 
+One of the picky issues is you need to make sure every `P` and `V` are matched otherwise you're in for trouble (analogous to `malloc/free` usage). 
+
 
 ## Mutexes/locks
 ```c
@@ -102,12 +104,4 @@ When you're checking condition, you _must_ use a `while` loop:
 
 ## Message passing/IPC
 `(Omit as bonus content, was not discussed in course)`
-
-# How to use
-
-# Producer-consumer/bounded buffer problem 
-
-# Readers-writers problem
-
-# Dining philosophers
 
