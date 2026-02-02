@@ -5,6 +5,7 @@
 
 > The point is it's kinda hard to talk generally about implementation without a specific piece of hardware, so we cover MIPS R3000. 
 
+
 ### MIPS R3000
 
 Has a load/store architecture, only load and store instructions will ever operate on memory. 
