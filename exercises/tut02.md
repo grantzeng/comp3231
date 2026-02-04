@@ -154,44 +154,152 @@ void leave() {
 ```
 
 
-
-
 3. Multiple threads are waiting for the same thing to happen (e.g. a disk block to arrive from disk). Write pseudo-code for a synchronising and waking the multiple threads waiting for the same event.
 
 > The point is to show when semaphores and condition variables are easy or hard. This one is hard with semaphores, because you're basically having to implement `cv_broadcast` from scratch. 
 
+### Semaphore solution 
+#### Seemingly correct but non-solution
+```c
+/*
+    Strategy: 
+    - need a semaphore to guard the disk 
+    - need a semaphore to guard the count of waiting threads
+
+*/
+
+struct semaphore *disk_sem = sem_create("", 0);
+
+int n = 0; 
+struct semaphore *n_lock = sem_create("", 1); 
+
+void wait() { /* enqueue a thread waiting for a disk*/
+
+    P(n_lock);      // mark as waiting
+        n++;  
+    V(n_lock);
+
+    P(disk_sem);    // enqueue for the disk 
+}
+
+void release() { /* called by disk when block arrives */
+    
+    P(n_lock);
+
+    while (n > 0) { 
+        V(disk_sem); 
+        n--; 
+    }
+
+    V(n_lock); 
+}
+```
+It's not at all obvious to me that this is wrong: 
+- Might be a lost wake up 
+- What if `release` is called before a `wait` (i.e. user doesn't match things)
+
+> One problem: in `wait` there is a timing gap between incrementing the waiting count and actually waiting, so it could be the case the scheduler switches to to `release` and does a `V(disk_sem)`, before swapping back to `wait` and running `P(disk_sem)` $\rightarrow$ lost wake up 
+
+
+#### Trying again 
+
 
 ```c
-// struct semaphore *disk_sem = sem_create("", 0);
+#define READY 1
+#define NOT_READY 0
 
-// int n = 0;  // number in wait queue
-// struct sempahore *lock = sem_create("", 1); 
+struct semaphore *mutex = sem_create("", 1); // metadata lock 
+int status = NOT_READY; 
+int n = 0; // count of waiters
 
+struct semaphore *waiting = sem_create("", 0); // resource counting
 
-// void wait() {
-//     // Mark an additional thread waiting for disk
-//     P(lock); 
-//     n++; 
-//     V(lock); 
+void wait(void) {
+    P(mutex); 
+    
+    if (status == NOT_READY) {  // we need to recheck status on wakeup
+        n++; 
+        V(mutex);  // release the metadata lock (so you don't go to sleep holding the mutex)
+        P(waiting);  // take a permit and go to sleep 
+        return; 
+    }
+    
+    V(mutex); 
+    
+}
 
-//     // Make current thread wait for disk
-//     P(disk_sem); 
-// }
+void release(void) {
 
-// void release() {
-//     P(lock); 
+    P(mutex); 
+    
+    status = READY; 
 
-//     // release all threads waiting for disk and decrement count
-//     while (n > 0) { 
-//         V(disk_sem);
-//         n--;  
-//     }
+    while (n > 0) { 
+        n--; 
+        V(waiting); // release a permit and wake up someone up  
+    }
 
-//     V(lock);
-// }
+    V(mutex); 
 
+}
 ```
 
+This solution solves the issue that updating the metadata on waiting wasn't coupled with actually waiting. 
+- Mutex protects metadata/action coupling. 
+- Then we just use `waiting` semaphore as a queue and  only need to issue `n` permits to release threads
+
+### What happens if we allow block to be made unavailable 
+
+
+```c
+#define READY 1
+#define NOT_READY 0
+
+struct semaphore *mutex = sem_create("", 1); // metadata lock 
+int status = NOT_READY; 
+int n = 0; // count of waiters
+
+struct semaphore *waiting = sem_create("", 0); // resource counting
+
+void wait(void) {
+    P(mutex); 
+    
+    if (status == NOT_READY) {  // we need to recheck status on wakeup
+        n++; 
+        V(mutex);  // release the metadata lock (so you don't go to sleep holding the mutex)
+        P(waiting);  // take a permit and go to sleep 
+        return; 
+    }
+    
+    V(mutex); 
+    
+}
+
+void release(void) {
+
+    P(mutex); 
+    
+    status = READY; 
+
+    while (n > 0) { 
+        n--; 
+        V(waiting); // release a permit and wake up someone up  
+    }
+
+    V(mutex); 
+
+}
+
+void prohibit(void) { 
+    P(mutex); 
+    status = NOT_READY; 
+    V(mutex); 
+}
+```
+
+
+
+### Condition variable solution 
 Condition variable solution (condition on the status of the block)
 ```c
 #define READY 1

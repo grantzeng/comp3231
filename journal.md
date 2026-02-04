@@ -78,3 +78,30 @@ I think it's still too early to implement a safe `fork`, we don't understand eno
 We're stuck on a programming problem that uses semaphores (basically you have to invent `cv_broadcast` somehow, which I don't know how to for now)
 
 > Can you explain why your current solution is wrong
+
+
+# 2026-02-04
+### 10:26am 
+
+We need a better understanding of how to program safely in concurrent environments, I feel like this is one of the bottlenecks to you implementing fork/exec correctly. So I'll chuck a few hours at doing that first and solve the old OS161 assignment 
+
+Maybe general project could be: implement all the components of an OS in OS161
+
+
+The things to do: 
+- Redo the programming with semaphores and 
+- Work through the classic concurrency problems
+
+
+### 12:10pm 
+_Maybe_ the moral of the exercise is programming with semaphores is...hard to get right. 
+
+So let's leave this for now. 
+
+
+### 2:41pm 
+I think let's just recap the solution for solving bounded buffer problem with semaphores, then print out the assignment sheet and call it a day.
+
+
+### 4:33pm 
+I think programming with semaphores and condition variables have sunken in a bit more (and all the abstractions we use to synchronise the concunrrency does seem to make more sense now re: queueing things up)

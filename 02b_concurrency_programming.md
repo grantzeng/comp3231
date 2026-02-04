@@ -1,10 +1,6 @@
 # Handling concurrency
 > 1. Discussion of synchronisation primitives and 2. how to actually use them. 
 
-### (The pattern of resource counting/locking in design of data structures)
-
-
-
 # Synchronization primitives
 > Interface/header file lives at `kern/include/synch.h` 
 
@@ -41,8 +37,8 @@ There are really only two (questionable) use cases:
 One of the picky issues is you need to make sure every `P` and `V` are matched otherwise you're in for trouble (analogous to `malloc/free` usage). 
 
 
-It's hard to use when you're trying to make threads _wait_ on a particular condition. 
-- Try implementing `cv_broadcast` with semaphores and you'll see (see tut02; basically you end up needing a mutex to protect the system metadata while it could be updated, then you need counting semaphore to track waiters)
+They're hard to use if you're trying to make a thread _wait_ on a particular condition. 
+- Try implementing `cv_broadcast` with semaphores and you'll see (see tut02; basically you end up needing a mutex to protect the system metadata while it could be updated, then you need counting semaphore to track waiters. It is very awkward.) 
 
 
 ## Mutexes/locks
@@ -115,3 +111,10 @@ The _lock_ is to mutex accessing the shared state of the variable being watched.
 ## Message passing/IPC
 `(Omit as bonus content, was not discussed in course)`
 
+# Practical advice
+> `TODO: go research what advice you can find about programming in concurrent environments, like what are the main pitfalls`
+
+### (The pattern of resource counting/locking in design of data structures)
+`TODO`
+### (Using invarinats to avoid writing a footgun)
+`TODO`
