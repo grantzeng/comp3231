@@ -9,11 +9,15 @@
 > Interface/header file lives at `kern/include/synch.h` 
 
 
-> _What this is about_: Programming in contexts where there are multiple threads of execution 
+> _What this is about_: Programming in contexts where there are multiple threads of execution (the issue is "bad" interleavings of code when there is some shared resource, because you should assume scheduler is random)
 
 ## Semphores 
+> "Semaphores are the `goto` of concurrent programming"
+
+> "Semaphores are still useful in other kinds of asynchronous processes such as CPU to GPU synchronization or keeping trains on railways from colliding." 
+
 ```c
-struct sempahore { 
+struct semaphore { 
     char *sem_name; 
     struct wchan *sem_wchan; 
     struct spinlock sem_lock; 
@@ -24,20 +28,26 @@ struct semaphore *sem_create(const char *name, unsigned initial_count);
 
 void sem_destroy(struct semaphore *);
 
-void P(struct semaphore *);  // P: "proberen"/decrement/wait
-void V(struct semaphore *);  // V: "verhogen"/increment/signal
+void P(struct semaphore *);  // P: "proberen"/decrement/wait/acquire
+void V(struct semaphore *);  // V: "verhogen"/increment/signal/release
 ```
 
-**Use it for permit counting/"number of threads which can access a resource initially"** Semaphore is initialised to the number of permits to access a resource _initially_. 
+There are really only two (questionable) use cases: 
+1. **As a mutex/lock, when set as a binary semaphore**. If you set initial count to `1` then at most one resource is allowed in, so you can do mutual exclusion 
+- Strictly speaking this isn't a lock, because locks are "owned". 
 
-> If you set the initial count to 1 ("binary semaphore") then effectively you have a lock/mutex: at most one thread is allowed to access a resource. But the difference is that locks are "owned", whereas a sempahore is not. 
+2. **For resource access counting/degree of concurrent access allowed**. Set initial count to how many threads you want to let access a resource initially. It might be `0` if you were, say protecting access to a resource not yet available. 
 
 One of the picky issues is you need to make sure every `P` and `V` are matched otherwise you're in for trouble (analogous to `malloc/free` usage). 
 
 
+It's hard to use when you're trying to make threads _wait_ on a particular condition. 
+- Try implementing `cv_broadcast` with semaphores and you'll see (see tut02; basically you end up needing a mutex to protect the system metadata while it could be updated, then you need counting semaphore to track waiters)
+
+
 ## Mutexes/locks
 ```c
-// The word lock is overloaded generally, but in OS161, lock ~= roughly thing you use for mutexing
+// The word lock is overloaded generally, but in OS161, lock ~= roughly thing you use for mutexing, but also has an owner
 struct lock { 
     char *lk_name; 
     HANGMAN_LOCKABLE(lk_hangman); 
@@ -77,15 +87,15 @@ void cv_broadcast(struct cv *cv, struct lock *lock);
 
 The _lock_ is to mutex accessing the shared state of the variable being watched. (You need to acquire/release)
 
-When you're checking condition, you _must_ use a `while` loop:  
+**When you're checking condition, you _must_ use a `while` loop**:  
 ```c
     lock_acquire(l); 
 
     // We actually want an if...but the issue is spurious wakeups! 
     // So need to recheck condition in case of that. 
     while (flag != 1) {
-        cv_wait(cv, l);
-    }
+        cv_wait(cv, l)
+    };
 
     lock_release(l); 
 ```
